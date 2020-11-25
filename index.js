@@ -1,6 +1,31 @@
 import React, { useState, useRef, forwardRef, useEffect, createElement } from 'react';
 import ReactDOM from 'react-dom';
 
+let initialState = { count: 0, cake: true }
+
+let actions = [
+	{ type: 'ADD', by: 2 },
+	{ type: 'MINUS', by: 4 },
+	{ type: 'ADD', by: 10 },
+	{ type: 'EAT_CAKE' }
+]
+function reducer(state, action) {
+	switch(action.type) {
+		case "ADD":
+			return {...state, count: state.count + action.by};
+			break;
+		case "MINUS":
+			return {...state, count:state.count - action.by};
+			break;
+		case "EAT_CAKE":
+			return {...state, cake: false};
+			break;
+			default:
+				return state;
+	}
+}
+  console.log(actions.reduce(reducer, initialState))
+
 // Overall, you want to be able to switch between forms.
 // 1) Turn the Login/Signup forms into controlled components
 // 2) Make just one form show up at a time
@@ -22,19 +47,27 @@ const App = () => {
 };
 
 const ToggleableForm = ({ options }) => {
-	const currentForm = 0; // Change this to 1 to get the Signup form to show up
-	let focusRef = 0;
+	// const currentForm = 1; // Change this to 1 to get the Signup form to show up
+	const [currentForm, setCurrentForm] = useState(0);
+	let focusRef = useRef(null);
+
+	// function toggleForm(index) {
+	// 	setCurrentForm(index)
+	// }
 
 	return (
 		<>
 			{options.map((el, index) => {
-				return <ButtonToggle key={`button${index}`}>{el.name}</ButtonToggle>;
+				return <ButtonToggle 
+						key={`button${index}`} 
+						toggleForm={() => setCurrentForm(index)} index={index}>{el.name}</ButtonToggle>;
 			})}
 			<FormToggle currentIndex={currentForm}>
 				{options.map((el, index) => {
 					return (
 						<div key={`form${index}`}>
 							{createElement(el.component, {
+								ref: focusRef
 								/* Hmm, what should go here?*/
 							})}
 						</div>
@@ -45,10 +78,11 @@ const ToggleableForm = ({ options }) => {
 	);
 };
 
-const ButtonToggle = ({ children, toggleRef, toggleForm }) => {
+const ButtonToggle = ({ children, toggleRef, toggleForm, index }) => {
 	return (
 		<button
 			onClick={() => {
+				toggleForm()
 				// Hmm, things should happen here
 			}}
 		>
@@ -59,7 +93,7 @@ const ButtonToggle = ({ children, toggleRef, toggleForm }) => {
 
 const FormToggle = ({ children, currentIndex }) => {
 	if (Array.isArray(children)) {
-		return <div>{children}</div>;
+		return <div>{children[currentIndex]}</div>;
 		// Remember, `children` is an array when there's multiple!
 		// So, if you want to show all the forms, you just put
 		// `children`.
@@ -68,32 +102,69 @@ const FormToggle = ({ children, currentIndex }) => {
 	return null;
 };
 
-const LoginForm = props => {
+const LoginForm = forwardRef((props, ref) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
+	useEffect(() => {
+		ref.current.focus()
+	}, [])
+
 	return (
 		<>
-			<input type="text" defaultValue={username} placeholder="Username" />
-			<input type="password" defaultValue={password} placeholder="Password" />
+			<input 
+				type="text" 
+				ref={ref}
+				value={username}
+				onChange={(e) => setUsername(e.target.value)} 
+				placeholder="Username" 
+			/>
+			<input 
+				type="password" 
+				value={password}
+				onChange={(e) => setPassword(e.target.value)} 
+				placeholder="Password" 
+			/>
 			<button>Submit</button>
 		</>
 	);
-};
+});
 
-const SignupForm = props => {
+const SignupForm = forwardRef((props, ref) => {
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
+	useEffect(() => {
+		ref.current.focus()
+	}, [])
+
 	return (
 		<>
-			<input type="email" defaultValue={email} placeholder="Email" />
-			<input type="text" defaultValue={username} placeholder="Username" />
-			<input type="password" defaultValue={password} placeholder="Password" />
+			<input 
+				type="email" 
+				ref={ref}
+				value={email} 
+				onChange={(e) => setEmail(e.target.value)} 
+				placeholder="Email" 
+			/>
+			<input 
+				type="text" 
+				value={username} 
+				onChange={(e) => setUsername(e.target.value)} 
+				placeholder="Username" 
+			/>
+			<input 
+				type="password" 
+				value={password} 
+				onChange={(e) => setPassword(e.target.value)} 
+				placeholder="Password" 
+			/>
 			<button>Submit</button>
 		</>
 	);
-};
+});
+
+
 
 ReactDOM.render(<App />, document.getElementById('root'));
