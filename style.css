@@ -1,26 +1,38 @@
 body {
-}
-
-input {
-	margin: 5px 0;
+	margin: 0;
+	padding: 0;
+  }
+  .App {
 	padding: 5px;
-	min-width: 250px;
-	border: 1px solid black;
-	border-radius: 5px;
-}
-
-button {
-	margin: 5px;
-	margin-left: 0;
-	background: #41a5e1;
-	border: none;
-	border-radius: 5px;
+	width: 100vw;
+	height: 100vh;
+	font-family: sans-serif;
+	text-align: center;
+  }
+  .App.darkmode {
+	background: black;
 	color: white;
-	font-size: 16px;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-button:focus {
-	background: #3d6d8a;
-}
+  }
+  button,
+  input,
+  select {
+	margin: 5px;
+	padding: 5px;
+	background: white;
+	border: 3px solid black;
+	color: black;
+  }
+  .darkmode button,
+  .darkmode input,
+  .darkmode select {
+	background: black;
+	border: 3px solid white;
+	color: white;
+  }
+  .error {
+	color: red;
+  }
+  .sheet {
+	margin: 5px auto;
+	text-align: left;
+  }
